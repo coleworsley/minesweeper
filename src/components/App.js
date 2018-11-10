@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Grid from './Grid';
 
@@ -10,7 +9,7 @@ class App extends Component {
         <header className="App-header">
           <h1>Minesweeper</h1>
         </header>
-        <Grid />
+        <Grid rows={10} columns={10} mines={20}/>
       </div>
     );
   }
