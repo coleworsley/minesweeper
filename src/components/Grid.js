@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import BoxModel from '../models/BoxModel';
 import Box from './Box';
+import './Grid.css';
 import { getRandomNumber } from '../helpers';
 
 class Grid extends Component {
@@ -31,7 +32,7 @@ class Grid extends Component {
   renderComponents() {
     return this.state.grid.map((row, i) => (
       <div className="row" key={i}>
-        {row.map((box, j) => <Box row={i} column={j} key={[i,j]}/>)}
+        {row.map((box, j) => <Box {...box} key={[i,j]}/>)}
       </div>
     ))
   }
