@@ -1,7 +1,10 @@
-.box {
-  display: block;
-  background-color: grey;
-  height: 10px;
-  width: 10px;
-  border: 1px solid #000;
+.grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.row {
+  display: flex
 }

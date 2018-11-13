@@ -1,4 +1,7 @@
-.grid {
-  display: grid;
-  
+.box {
+  display: block;
+  background-color: grey;
+  border: 1px solid #000;
+  width: 25px;
+  height: 25px;
 }
