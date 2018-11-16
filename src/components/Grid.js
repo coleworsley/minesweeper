@@ -14,7 +14,7 @@ class Grid extends Component {
     this.renderComponents = this.renderComponents.bind(this);
     this.findBorder = this.findBorder.bind(this);
     this.setValues = this.setValues.bind(this);
-    this.handleClick = this.handleClick.bind(this);
+    this.checkGameState = this.checkGameState.bind(this);
   }
 
   componentDidMount() {
@@ -24,7 +24,7 @@ class Grid extends Component {
     for (let i = 0; i < rows; i++) {
       const row = [];
       for (let j = 0; j < columns; j++) {
-        row.push(new BoxModel());
+        row.push(new BoxModel(i, j));
       }
       grid.push(row);
     }
@@ -34,13 +34,6 @@ class Grid extends Component {
     this.setState({ grid });
   }
 
-  renderComponents() {
-    return this.state.grid.map((row, i) => (
-      <div className="row" key={i}>
-        {row.map((box, j) => <Box {...box} handleClick={this.handleClick} key={[i,j]}/>)}
-      </div>
-    ))
-  }
 
   plantMines(grid) {
     const { mines } = this.props;
@@ -111,8 +104,31 @@ class Grid extends Component {
     return border;
   }
 
-  handleClick(e) {
-    console.log(e.target)
+
+  checkGameState(e) {
+    const row = parseInt(e.target.getAttribute('row'));
+    const column = parseInt(e.target.getAttribute('column'));
+    const { grid } = this.state;
+    const box = grid[row][column];
+    console.log('value', box.value);
+    if (box.mine) {
+      console.log('Game Over');
+    }
+
+    if (box.value === 0) {
+      console.log('Reveal Multiple')
+    } else {
+      console.log('Reveal One');
+      box.hidden = false;
+    }
+  }
+
+  renderComponents() {
+    return this.state.grid.map((row, i) => (
+      <div className="row" key={i}>
+        {row.map((box, j) => <Box {...box} checkGameState={this.checkGameState} key={[i,j]}/>)}
+      </div>
+    ))
   }
 
   render() {
