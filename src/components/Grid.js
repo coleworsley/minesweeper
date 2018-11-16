@@ -11,7 +11,10 @@ class Grid extends Component {
       grid: [],
     };
     this.plantMines = this.plantMines.bind(this);
-    this.generateComponents = this.renderComponents.bind(this);
+    this.renderComponents = this.renderComponents.bind(this);
+    this.findBorder = this.findBorder.bind(this);
+    this.setValues = this.setValues.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
@@ -26,13 +29,15 @@ class Grid extends Component {
       grid.push(row);
     }
 
-    this.setState({ grid: this.plantMines(grid) });
+    this.plantMines(grid);
+    this.setValues(grid);
+    this.setState({ grid });
   }
 
   renderComponents() {
     return this.state.grid.map((row, i) => (
       <div className="row" key={i}>
-        {row.map((box, j) => <Box {...box} key={[i,j]}/>)}
+        {row.map((box, j) => <Box {...box} handleClick={this.handleClick} key={[i,j]}/>)}
       </div>
     ))
   }
@@ -52,8 +57,62 @@ class Grid extends Component {
         counter++
       }
     }
+  }
 
-    return grid;
+  setValues(grid) {
+    for (let row = 0; row < grid.length; row++) {
+
+      for (let column = 0; column < grid[row].length; column++) {
+        const box = grid[row][column];
+        if (box.mine) {
+          this.findBorder(box, row, column, grid).map(e => e.value++);
+
+        }
+      }
+    }
+  }
+
+  findBorder(box, row, column, grid) {
+    const border = [];
+
+    // Above
+    if (row > 0) {
+      border.push(grid[row - 1][column]);
+    }
+    // Below
+    if (row < grid.length - 1) {
+      border.push(grid[row + 1][column]);
+    }
+    // Left
+    if (column > 0) {
+      border.push(grid[row][column - 1]);
+    }
+    // Right
+    if (column < grid[row].length - 1) {
+      border.push(grid[row][column + 1]);
+    }
+    // Upper Left
+    if (row > 0 && column > 0) {
+      border.push(grid[row - 1][column - 1]);
+    }
+    // Upper Right
+    if (row > 0 && column < grid[row].length - 1) {
+      border.push(grid[row - 1][column + 1]);
+    }
+    // Lower Left
+    if (row < grid.length - 1 && column > 0) {
+      border.push(grid[row + 1][column - 1]);
+    }
+    // Lower Right
+    if ((row < grid.length - 1) && column < grid[row].length - 1) {
+      border.push(grid[row + 1][column + 1]);
+    }
+    console.log(border);
+    return border;
+  }
+
+  handleClick(e) {
+    console.log(e.target)
   }
 
   render() {
