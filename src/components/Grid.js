@@ -9,11 +9,14 @@ class Grid extends Component {
     super();
     this.state = {
       grid: [],
+      timer: 0,
+
     };
     this.plantMines = this.plantMines.bind(this);
     this.renderComponents = this.renderComponents.bind(this);
     this.findBorder = this.findBorder.bind(this);
     this.setValues = this.setValues.bind(this);
+    this.reveal = this.reveal.bind(this);
     this.checkGameState = this.checkGameState.bind(this);
   }
 
@@ -54,12 +57,10 @@ class Grid extends Component {
 
   setValues(grid) {
     for (let row = 0; row < grid.length; row++) {
-
       for (let column = 0; column < grid[row].length; column++) {
         const box = grid[row][column];
         if (box.mine) {
           this.findBorder(box, row, column, grid).map(e => e.value++);
-
         }
       }
     }
@@ -100,7 +101,6 @@ class Grid extends Component {
     if ((row < grid.length - 1) && column < grid[row].length - 1) {
       border.push(grid[row + 1][column + 1]);
     }
-    console.log(border);
     return border;
   }
 
@@ -108,19 +108,40 @@ class Grid extends Component {
   checkGameState(e) {
     const row = parseInt(e.target.getAttribute('row'));
     const column = parseInt(e.target.getAttribute('column'));
-    const { grid } = this.state;
+    const grid = Object.assign({}, this.state.grid)
     const box = grid[row][column];
-    console.log('value', box.value);
+
     if (box.mine) {
       console.log('Game Over');
     }
 
+    const border = this.findBorder(box, row, column, grid);
     if (box.value === 0) {
+      this.reveal(border);
       console.log('Reveal Multiple')
     } else {
+      this.reveal(border);
       console.log('Reveal One');
+
       box.hidden = false;
     }
+
+
+  }
+
+  reveal(border) {
+    const { grid } = this.state;
+
+    for (let row = 0; row < grid.length; row++) {
+      for (let column = 0; column < grid[row].length; column++) {
+        const box = grid[row][column];
+
+
+        box.hidden = false;
+      }
+    }
+
+    return grid;
   }
 
   renderComponents() {
