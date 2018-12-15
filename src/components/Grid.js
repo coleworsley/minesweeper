@@ -1,16 +1,15 @@
-import React, { Component } from 'react';
-import BoxModel from '../models/BoxModel';
-import Box from './Box';
-import './Grid.css';
-import { getRandomNumber } from '../helpers';
+import React, { Component } from "react";
+import BoxModel from "../models/BoxModel";
+import Box from "./Box";
+import "./Grid.css";
+import { getRandomNumber } from "../helpers";
 
 class Grid extends Component {
   constructor() {
     super();
     this.state = {
       grid: [],
-      timer: 0,
-
+      timer: 0
     };
     this.plantMines = this.plantMines.bind(this);
     this.renderComponents = this.renderComponents.bind(this);
@@ -37,11 +36,10 @@ class Grid extends Component {
     this.setState({ grid });
   }
 
-
   plantMines(grid) {
     const { mines } = this.props;
-    const y = grid.length
-    const x = grid[0].length
+    const y = grid.length;
+    const x = grid[0].length;
     let counter = 0;
 
     while (counter < mines) {
@@ -50,7 +48,7 @@ class Grid extends Component {
       const box = grid[row][column];
       if (!box.mine) {
         box.mine = true;
-        counter++
+        counter++;
       }
     }
   }
@@ -68,13 +66,15 @@ class Grid extends Component {
 
   findBorder(box, row, column, grid) {
     const border = [];
+    const rows = grid.length;
+    const columns = grid[0].length;
 
     // Above
     if (row > 0) {
       border.push(grid[row - 1][column]);
     }
     // Below
-    if (row < grid.length - 1) {
+    if (row < rows - 1) {
       border.push(grid[row + 1][column]);
     }
     // Left
@@ -82,7 +82,7 @@ class Grid extends Component {
       border.push(grid[row][column - 1]);
     }
     // Right
-    if (column < grid[row].length - 1) {
+    if (column < columns - 1) {
       border.push(grid[row][column + 1]);
     }
     // Upper Left
@@ -90,74 +90,72 @@ class Grid extends Component {
       border.push(grid[row - 1][column - 1]);
     }
     // Upper Right
-    if (row > 0 && column < grid[row].length - 1) {
+    if (row > 0 && column < columns - 1) {
       border.push(grid[row - 1][column + 1]);
     }
     // Lower Left
-    if (row < grid.length - 1 && column > 0) {
+    if (row < rows - 1 && column > 0) {
       border.push(grid[row + 1][column - 1]);
     }
     // Lower Right
-    if ((row < grid.length - 1) && column < grid[row].length - 1) {
+    if (row < rows - 1 && column < columns - 1) {
       border.push(grid[row + 1][column + 1]);
     }
+
     return border;
   }
 
-
   checkGameState(e) {
-    const row = parseInt(e.target.getAttribute('row'));
-    const column = parseInt(e.target.getAttribute('column'));
-    const grid = Object.assign({}, this.state.grid)
+    const row = parseInt(e.target.getAttribute("row"));
+    const column = parseInt(e.target.getAttribute("column"));
+    const grid = Object.assign([], this.state.grid);
     const box = grid[row][column];
 
     if (box.mine) {
-      console.log('Game Over');
-    }
-
-    const border = this.findBorder(box, row, column, grid);
-    if (box.value === 0) {
-      this.reveal(border);
-      console.log('Reveal Multiple')
+      console.log("Game Over");
     } else {
-      this.reveal(border);
-      console.log('Reveal One');
-
+      console.log(box);
       box.hidden = false;
+
+      if (box.value === 0) {
+        console.log("reveal multiple");
+        this.reveal(box, grid);
+      }
+
+      this.setState({ grid });
     }
-
-
   }
 
-  reveal(border) {
-    const { grid } = this.state;
+  reveal(box, grid) {
+    const border = this.findBorder(box, box.row, box.column, grid);
 
-    for (let row = 0; row < grid.length; row++) {
-      for (let column = 0; column < grid[row].length; column++) {
-        const box = grid[row][column];
+    for (let i = 0; i < border.length; i++) {
+      const currentBox = border[i];
 
+      if (currentBox.hidden && !currentBox.mine) {
+        grid[currentBox.row][currentBox.column].hidden = false;
 
-        box.hidden = false;
+        if (currentBox.value === 0) {
+          this.reveal(currentBox, grid);
+          
+        }
       }
     }
-
-    return grid;
   }
 
   renderComponents() {
+    console.log(this.state.grid.map);
     return this.state.grid.map((row, i) => (
       <div className="row" key={i}>
-        {row.map((box, j) => <Box {...box} checkGameState={this.checkGameState} key={[i,j]}/>)}
+        {row.map((box, j) => (
+          <Box {...box} checkGameState={this.checkGameState} key={[i, j]} />
+        ))}
       </div>
-    ))
+    ));
   }
 
   render() {
-    return (
-      <div className="grid">
-        {this.renderComponents()}
-      </div>
-    )
+    return <div className="grid">{this.renderComponents()}</div>;
   }
 }
 

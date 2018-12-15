@@ -16,7 +16,7 @@ class Box extends Component {
   }
 
   render() {
-    const { hidden, row, column, mine } = this.props
+    const { hidden, row, column, mine, value } = this.props
     const view = hidden ? 'hidden' : 'visible';
     return (
       <div
@@ -25,10 +25,11 @@ class Box extends Component {
         row={row}
         column={column}
       >
-        {mine ? 'X' : this.props.value}
+        { !hidden && (mine ? 'X' : value) }
       </div>
     )
   }
 }
+// {mine ? 'X' : this.props.value}
 
 export default Box;
